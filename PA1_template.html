@@ -189,7 +189,7 @@ hljs.initHighlightingOnLoad();
 
 <pre><code class="r">df &lt;- read.csv(unz(&quot;activity.zip&quot;, &quot;activity.csv&quot;), stringsAsFactors = FALSE)
 
-# transform date column to class Date
+# transform date column to class Date and steps to numeric
 df$date &lt;- as.Date(df$date)
 df$steps &lt;- as.numeric(df$steps)
 </code></pre>
@@ -223,6 +223,8 @@ mean(dfc$steps)
 <pre><code>## [1] 10766
 </code></pre>
 
+<p>As shown above the <strong>mean is 10,766 steps</strong>.</p>
+
 <p>The we&#39;ll calculate the <strong>median number of steps taken per day</strong>:</p>
 
 <pre><code class="r"># show median total number of steps taken per day
@@ -231,6 +233,8 @@ median(dfc$steps)
 
 <pre><code>## [1] 10765
 </code></pre>
+
+<p>As shown above the <strong>median is 10,765 steps</strong>.</p>
 
 <h2>What is the average daily activity pattern?</h2>
 
@@ -261,6 +265,8 @@ dfc[dfc$avg_steps == max(dfc$avg_steps), ]
 ## 104      835     206.2
 </code></pre>
 
+<p>As shown above the <strong>time interval is 835</strong>.</p>
+
 <h2>Imputing missing values</h2>
 
 <p>In the previous calculations and plots we&#39;ve removed <code>NA</code> observations. Going back to the original data frame (<code>df</code>) we&#39;ll calculate the total number of <code>NA</code> values in the dataset:</p>
@@ -272,7 +278,9 @@ sum(is.na(df))
 <pre><code>## [1] 2304
 </code></pre>
 
-<p>We&#39;ll replace the <code>NA</code> values in the dataset. Our <strong>strategy</strong> will be to loop through the data frame and replace each <code>NA</code> value with the corresponding average steps value for that time interval as calculated earlier in the <code>dfc</code> data frame. This new dataset will the missing data filled in will be called <code>df_new</code>.</p>
+<p>As shown above <strong>the number of <code>NA</code> values is 2,304</strong>.</p>
+
+<p>We&#39;ll replace the <code>NA</code> values in the dataset. Our <strong>strategy</strong> will be to loop through the data frame and replace each <code>NA</code> value with the corresponding average steps value for that time interval as calculated earlier in the <code>dfc</code> data frame. This new dataset with the missing data filled in will be called <code>df_new</code>.</p>
 
 <pre><code class="r"># create copy of original dataset
 df_new &lt;- df
@@ -311,6 +319,8 @@ mean(df_new_sum$steps)
 <pre><code>## [1] 10766
 </code></pre>
 
+<p>As shown above <strong>the mean is 10,766</strong>.</p>
+
 <p>And the <strong>median</strong>:</p>
 
 <pre><code class="r"># show median
@@ -320,7 +330,9 @@ median(df_new_sum$steps)
 <pre><code>## [1] 10766
 </code></pre>
 
-<p>By imputing new values in the <code>NA</code> observations the <strong>mean</strong> number of steps per day has remained the same, which is a function of replacing <code>NA</code> values with the average per day. But the <strong>median</strong> number of steps increased from 10,765 steps to 10,766 steps. The <strong>impact</strong> of imputing missing data has increased the median number of steps per day in the dataset while not affecting the <em>mean</em> number of steps since the strategy we&#39;ve chosen adds <strong>mean values</strong> to the dataset which keeps the <strong>mean</strong> unchanged.</p>
+<p>As shown above <strong>the median is 10,766</strong>.</p>
+
+<p>By imputing new values in the <code>NA</code> observations the <strong>mean</strong> number of steps per day has remained the same, which is a function of replacing <code>NA</code> values with the average per day. But the <strong>median</strong> number of steps increased from 10,765 steps to 10,766 steps. The <strong>impact</strong> of imputing missing data has increased the median number of steps per day in the dataset while not affecting the <strong>mean</strong> number of steps since the strategy we&#39;ve chosen adds <strong>mean values</strong> to the dataset which keeps the <strong>mean</strong> unchanged.</p>
 
 <h2>Are there differences in activity patterns between weekdays and weekends?</h2>
 
@@ -341,13 +353,13 @@ for (i in i:nrow(df_new)) {
 df_new$day &lt;- as.factor(df_new$day)
 </code></pre>
 
-<p>Next we&#39;ll create a panel plot visualizing the activity differences on weekdays vs. weekends by 5 minute time intervals. First we&#39;ll create a data frame with the average number of steps per day by time interval:</p>
+<p>Next we&#39;ll create a panel plot using the <code>ggplot2</code> package visualizing the activity differences on weekdays vs. weekends by 5 minute time intervals. First we&#39;ll create a data frame with the average number of steps per day by time interval:</p>
 
 <pre><code class="r"># take the average steps per day by weekday/weekend by time interval
 dfg &lt;- df_new %.% group_by(interval, day) %.% summarise(steps = mean(steps))
 </code></pre>
 
-<p>The create the plot:</p>
+<p>Then create the plot:</p>
 
 <pre><code class="r"># plot weekday vs weekend
 ggplot(dfg, aes(interval, steps)) + geom_line() + facet_grid(day ~ .)

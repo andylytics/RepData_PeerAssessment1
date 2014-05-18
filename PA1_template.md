@@ -11,7 +11,7 @@ We'll start by loading the data from the `activity.zip` file provided in the rep
 ```r
 df <- read.csv(unz("activity.zip", "activity.csv"), stringsAsFactors = FALSE)
 
-# transform date column to class Date
+# transform date column to class Date and steps to numeric
 df$date <- as.Date(df$date)
 df$steps <- as.numeric(df$steps)
 ```
@@ -53,6 +53,8 @@ mean(dfc$steps)
 ```
 
 
+As shown above the **mean is 10,766 steps**.
+
 The we'll calculate the **median number of steps taken per day**:
 
 
@@ -65,6 +67,8 @@ median(dfc$steps)
 ## [1] 10765
 ```
 
+
+As shown above the **median is 10,765 steps**.
 
 ## What is the average daily activity pattern?
 
@@ -105,6 +109,8 @@ dfc[dfc$avg_steps == max(dfc$avg_steps), ]
 ```
 
 
+As shown above the **time interval is 835**.
+
 ## Imputing missing values
 
 In the previous calculations and plots we've removed `NA` observations. Going back to the original data frame (`df`) we'll calculate the total number of `NA` values in the dataset:
@@ -120,7 +126,9 @@ sum(is.na(df))
 ```
 
 
-We'll replace the `NA` values in the dataset. Our **strategy** will be to loop through the data frame and replace each `NA` value with the corresponding average steps value for that time interval as calculated earlier in the `dfc` data frame. This new dataset will the missing data filled in will be called `df_new`.
+As shown above **the number of `NA` values is 2,304**.
+
+We'll replace the `NA` values in the dataset. Our **strategy** will be to loop through the data frame and replace each `NA` value with the corresponding average steps value for that time interval as calculated earlier in the `dfc` data frame. This new dataset with the missing data filled in will be called `df_new`.
 
 
 ```r
@@ -172,6 +180,8 @@ mean(df_new_sum$steps)
 ```
 
 
+As shown above **the mean is 10,766**.
+
 And the **median**:
 
 
@@ -185,7 +195,9 @@ median(df_new_sum$steps)
 ```
 
 
-By imputing new values in the `NA` observations the **mean** number of steps per day has remained the same, which is a function of replacing `NA` values with the average per day. But the **median** number of steps increased from 10,765 steps to 10,766 steps. The **impact** of imputing missing data has increased the median number of steps per day in the dataset while not affecting the *mean* number of steps since the strategy we've chosen adds **mean values** to the dataset which keeps the **mean** unchanged.
+As shown above **the median is 10,766**.
+
+By imputing new values in the `NA` observations the **mean** number of steps per day has remained the same, which is a function of replacing `NA` values with the average per day. But the **median** number of steps increased from 10,765 steps to 10,766 steps. The **impact** of imputing missing data has increased the median number of steps per day in the dataset while not affecting the **mean** number of steps since the strategy we've chosen adds **mean values** to the dataset which keeps the **mean** unchanged.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -209,7 +221,7 @@ df_new$day <- as.factor(df_new$day)
 ```
 
 
-Next we'll create a panel plot visualizing the activity differences on weekdays vs. weekends by 5 minute time intervals. First we'll create a data frame with the average number of steps per day by time interval:
+Next we'll create a panel plot using the `ggplot2` package visualizing the activity differences on weekdays vs. weekends by 5 minute time intervals. First we'll create a data frame with the average number of steps per day by time interval:
 
 
 ```r
@@ -218,7 +230,7 @@ dfg <- df_new %.% group_by(interval, day) %.% summarise(steps = mean(steps))
 ```
 
 
-The create the plot:
+Then create the plot:
 
 
 ```r
